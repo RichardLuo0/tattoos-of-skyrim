@@ -1,0 +1,203 @@
+Scriptname TattoosOfSkyrimMgefScript extends ActiveMagicEffect  
+
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; NiOverride functions
+;
+;bool Function HasNodeOverride(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;
+; Return the stored override, returns default (nil) values if the override D.N.E
+;float Function GetNodeOverrideFloat(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;int Function GetNodeOverrideInt(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;bool Function GetNodeOverrideBool(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;string Function GetNodeOverrideString(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;TextureSet Function GetNodeOverrideTextureSet(ObjectReference ref, bool isFemale, string node, int key, int index) native global
+;
+;Function AddNodeOverrideFloat(ObjectReference ref, bool isFemale, string node, int key, int index, float value, bool persist) native global
+;Function AddNodeOverrideInt(ObjectReference ref, bool isFemale, string node, int key, int index, int value, bool persist) native global
+;Function AddNodeOverrideBool(ObjectReference ref, bool isFemale, string node, int key, int index, bool value, bool persist) native global
+;Function AddNodeOverrideString(ObjectReference ref, bool isFemale, string node, int key, int index, string value, bool persist) native global
+;Function AddNodeOverrideTextureSet(ObjectReference ref, bool isFemale, string node, int key, int index, TextureSet value, bool persist) native global
+;
+;
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Index: seems to be always 0 for strings/textures, -1 for anything else?
+;
+;
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Valid keys
+; ID - TYPE - Name
+; 0 - int - ShaderEmissiveColor
+; 1 - float - ShaderEmissiveMultiple
+; 2 - float - ShaderGlossiness
+; 3 - float - ShaderSpecularStrength
+; 4 - float - ShaderLightingEffect1
+; 5 - float - ShaderLightingEffect2
+; 6 - TextureSet - ShaderTextureSet
+; 7 - int - ShaderTintColor
+; 8 - float - ShaderAlpha
+; 9 - string - ShaderTexture (index 0-8)
+; 20 - float - ControllerStartStop (-1.0 for stop, anything else indicates start time)
+; 21 - float - ControllerStartTime
+; 22 - float - ControllerStopTime
+; 23 - float - ControllerFrequency
+; 24 - float - ControllerPhase
+;
+;
+;
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; Format for node strings:
+;
+; "<Area> [Ovl<slot>]"
+;
+; where <Area> is one of: {Body, Face, Feet, Hands}
+; and slot is a 0-based index
+
+
+
+
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; PROPERTIES
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+String Property npcType auto
+TattoosOfSkyrimQuestScript Property tosQuestScript auto
+TattoosOfSkyrimMCM Property tosMCMScript auto
+
+
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; CONSTANTS
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+int KEY_SHADER_TINT_COLOR = 7
+int KEY_SHADER_ALPHA = 8
+int KEY_SHADER_TEXTURE = 9
+
+string DEFAULT_OVERLAY = "Actors\\Character\\Overlays\\Default.dds"
+
+string AREA_BODY = "Body"
+;string AREA_FACE = "Face"
+;string AREA_FEET = "Feet"
+;string AREA_HANDS = "Hands"
+
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+; CODE
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Event OnEffectStart(Actor akTarget, Actor akCaster)
+  If !Roll(tosMCMScript.globalProb)
+		return
+	EndIf
+
+	int safetyBound = 100
+	While !tosQuestScript.FinishedLoading() && safetyBound > 0
+		Utility.Wait(0.25)
+		safetyBound = safetyBound - 1
+	EndWhile
+
+	If !tosQuestScript.FinishedLoading()
+		Debug.Trace("Tattoos of Skyrim could not apply overlays due to quest failing to load.")
+		return
+	EndIf
+
+	ActorBase targetBase = akTarget.GetLeveledActorBase()
+	int sex = targetBase.GetSex()
+	bool isFemale = sex as bool
+
+  ColorForm[] warpaintColors = PAPER_SKSEFunctions.GetWarpaintColors(targetBase)
+  ApplyMultipleOverlays(akTarget, warpaintColors, isFemale)
+
+  If !NiOverride.HasOverlays(akTarget)
+    NiOverride.AddOverlays(akTarget)
+  EndIf
+
+	FinaliseOverlays(akTarget)
+EndEvent
+
+; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Function ApplyMultipleOverlays(Actor akTarget, ColorForm[] warpaintColors, bool isFemale)
+  Int counter = 0
+  Int slot = tosMCMScript.slot
+  While counter < tosMCMScript.maxTattoos
+    If counter == 0 || Roll(tosMCMScript.multipleTattooProb)
+      slot = GetEmptySlot(akTarget, isFemale, AREA_BODY, slot)
+      If slot < 0
+        return
+      EndIf
+      ApplyRandomOverlay(akTarget, warpaintColors, isFemale, slot)
+    EndIf
+    counter += 1
+    slot += 1
+  EndWhile
+EndFunction
+
+Function ApplyRandomOverlay(Actor akTarget, ColorForm[] warpaintColors, bool isFemale, int slot)
+  String overlay = tosQuestScript.SampleOverlay(npcType, akTarget, isFemale)
+
+	If overlay == ""
+		return
+	EndIf
+
+	int color = -1
+	If (warpaintColors.Length > 0) && Roll(tosMCMScript.useExistingColorProb)
+		ColorForm warpaintColor = warpaintColors[Utility.RandomInt(0, warpaintColors.Length - 1)]
+		color = warpaintColor.GetColor()
+	; 	int newRed = warpaintColor.GetRed() + 35
+	; 	if newRed > 255
+	; 		newRed = 255
+	; 	endIf
+	; 	color = ColorComponent.SetRed(color, newRed)
+	; 	Float newValue = ColorComponent.GetValue(color) * 1.5
+	; 	if newValue > 1.0
+	; 		newValue = 1.0
+	; 	endIf
+	; 	color = ColorComponent.SetValue(color, newValue)
+	Else
+		color = tosQuestScript.SampleColor()
+	EndIf
+
+	ApplyOverlay(akTarget, isFemale, AREA_BODY, slot, texture=overlay, color=color)
+EndFunction
+
+Function ApplyOverlay(Actor akActor, bool isFemale, string area, int slot, string texture, int color, float alpha=0.85)
+  string node  = area + " [ovl" + slot + "]"
+
+	NiOverride.AddNodeOverrideString(akActor, isFemale, node, KEY_SHADER_TEXTURE, 0, texture, persist=true)
+	Utility.Wait(0.01)
+
+	NiOverride.AddNodeOverrideInt(akActor, isFemale, node, KEY_SHADER_TINT_COLOR, -1, color, persist=true)
+	Utility.Wait(0.01)
+
+	NiOverride.AddNodeOverrideFloat(akActor, isFemale, node, KEY_SHADER_ALPHA, -1, alpha, persist=true)
+	Utility.Wait(0.01)
+EndFunction
+
+Function FinaliseOverlays(Actor akActor)
+	akActor.QueueNiNodeUpdate()
+	Utility.Wait(0.01)
+	NiOverride.ApplyNodeOverrides(akActor)
+EndFunction
+
+Int Function GetEmptySlot(Actor akTarget, Bool Gender, String Area, int init = 0)
+	Int i = init
+	Int NumSlots = NiOverride.GetNumBodyOverlays()
+	String TexPath
+
+	While i < NumSlots
+		TexPath = NiOverride.GetNodeOverrideString(akTarget, Gender, Area + " [ovl" + i + "]", 9, 0)
+		If TexPath == "" || TexPath == DEFAULT_OVERLAY
+			Return i
+		EndIf
+		i += 1
+	EndWhile
+	Return -1
+EndFunction
+
+bool Function Roll(float chance)
+  If chance == 0.0
+    return false
+  ElseIf chance == 1.0
+    return true
+  EndIf
+  return Utility.RandomFloat(0, 0.99999) <= chance
+EndFunction

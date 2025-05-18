@@ -1,0 +1,70 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Exit-9B/MCM-Helper/main/docs/config.schema.json",
+  "modName": "TattoosOfSkyrim",
+  "displayName": "Tattoos of Skyrim",
+  "minMcmVersion": 13,
+  "cursorFillMode": "topToBottom",
+  "content": [
+    {
+      "text": "$slot",
+      "type": "slider",
+      "help": "$slotHelp",
+      "valueOptions": {
+        "min": 0,
+        "max": 8,
+        "step": 1,
+        "sourceType": "PropertyValueInt",
+        "propertyName": "slot",
+        "defaultValue": 0
+      }
+    },
+    {
+      "text": "$globalProb",
+      "type": "slider",
+      "valueOptions": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "formatString": "{2}",
+        "sourceType": "PropertyValueFloat",
+        "propertyName": "globalProb"
+      }
+    },
+    {
+      "text": "$maxTattoos",
+      "type": "slider",
+      "valueOptions": {
+        "min": 0,
+        "max": 8,
+        "step": 1,
+        "sourceType": "PropertyValueInt",
+        "propertyName": "maxTattoos",
+        "defaultValue": 2
+      }
+    },
+    {
+      "text": "$multipleTattooProb",
+      "type": "slider",
+      "valueOptions": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "formatString": "{2}",
+        "sourceType": "PropertyValueFloat",
+        "propertyName": "multipleTattooProb"
+      }
+    },
+    {
+      "text": "$useExistingColorProb",
+      "type": "slider",
+      "valueOptions": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "formatString": "{2}",
+        "sourceType": "PropertyValueFloat",
+        "propertyName": "useExistingColorProb"
+      }
+    }
+  ]
+}

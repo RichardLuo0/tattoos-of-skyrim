@@ -1,0 +1,29 @@
+{
+  "type": "",
+  "Body": {
+    "AnySex": {
+      "AnyRace": [
+        "Textures\\Actors\\Example.dds"
+      ],
+      "Argonian": [],
+      "Nord": [],
+      "Khajiit": []
+    },
+    "Female": {
+      "AnyRace": [],
+      "Altmer": [],
+      "Argonian": [],
+      "Dunmer": [],
+      "Imperial": [],
+      "Khajiit": [],
+      "Mage": [],
+      "Nord": []
+    },
+    "Male": {
+      "AnyRace": [],
+      "Argonian": [],
+      "Khajiit": [],
+      "Mage": []
+    }
+  }
+}
