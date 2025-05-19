@@ -99,12 +99,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
 		return
 	EndIf
 
-	ActorBase targetBase = akTarget.GetLeveledActorBase()
-	int sex = targetBase.GetSex()
-	bool isFemale = sex as bool
-
-  ColorForm[] warpaintColors = PAPER_SKSEFunctions.GetWarpaintColors(targetBase)
-  ApplyMultipleOverlays(akTarget, warpaintColors, isFemale)
+  ApplyMultipleOverlays(akTarget)
 
   If !NiOverride.HasOverlays(akTarget)
     NiOverride.AddOverlays(akTarget)
@@ -115,25 +110,31 @@ EndEvent
 
 ; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Function ApplyMultipleOverlays(Actor akTarget, ColorForm[] warpaintColors, bool isFemale)
-  Int counter = 0
-  Int slot = tosMCMScript.slot
+Function ApplyMultipleOverlays(Actor akTarget)
+  ActorBase targetBase = akTarget.GetLeveledActorBase()
+  bool isFemale = targetBase.GetSex() as bool
+
+  int overlaysView = tosQuestScript.GetOverlaysView(npcType, akTarget, isFemale)
+
+  int counter = 0
+  int slot = tosMCMScript.slot
   While counter < tosMCMScript.maxTattoos
     If counter == 0 || Roll(tosMCMScript.multipleTattooProb)
       slot = GetEmptySlot(akTarget, isFemale, AREA_BODY, slot)
       If slot < 0
         return
       EndIf
-      ApplyRandomOverlay(akTarget, warpaintColors, isFemale, slot)
+      ApplyRandomOverlay(akTarget, overlaysView, isFemale, slot)
     EndIf
-    counter += 1
     slot += 1
+    counter += 1
   EndWhile
+
+  JValue.release(overlaysView)
 EndFunction
 
-Function ApplyRandomOverlay(Actor akTarget, ColorForm[] warpaintColors, bool isFemale, int slot)
-  String overlay = tosQuestScript.SampleOverlay(npcType, akTarget, isFemale)
-
+Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int slot)
+  String overlay = ChooseRandomlyIn(overlaysView)
 	If overlay == ""
 		return
 	EndIf
@@ -176,6 +177,33 @@ Function FinaliseOverlays(Actor akActor)
 	akActor.QueueNiNodeUpdate()
 	Utility.Wait(0.01)
 	NiOverride.ApplyNodeOverrides(akActor)
+
+String Function ChooseRandomlyIn(int view)
+  int totalLength = 0
+  int i = 0
+  While i < JArray.count(view)
+    totalLength += JArray.count(JArray.getObj(view, i))
+    i += 1
+  EndWhile
+  If totalLength <= 0
+    return ""
+  EndIf
+
+  int randId = Utility.RandomInt(0, totalLength - 1)
+
+  i = 0
+  While i < JArray.count(view)
+    int array = JArray.getObj(view, i)
+    int len = JArray.count(array)
+    If randId < len
+      
+      return JArray.getStr(array, randId)
+    EndIf
+    randId -= len
+    i += 1
+  EndWhile
+
+  return ""
 EndFunction
 
 Int Function GetEmptySlot(Actor akTarget, Bool Gender, String Area, int init = 0)

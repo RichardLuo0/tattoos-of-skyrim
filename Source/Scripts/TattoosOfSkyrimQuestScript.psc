@@ -47,7 +47,7 @@ Bool Function FinishedLoading()
 	return !BusyLoading
 EndFunction
 
-String Function SampleOverlay(String type, Actor akActor, bool isFemale)
+int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
   int view = JArray.object()
 
   String[] currentType = new String[2]
@@ -110,36 +110,7 @@ String Function SampleOverlay(String type, Actor akActor, bool isFemale)
     j += 1
   EndWhile
 
-  int totalLength = 0
-  int i = 0
-  While i < JArray.count(view)
-    totalLength += JArray.count(JArray.getObj(view, i))
-    i += 1
-  EndWhile
-  If totalLength <= 0
-    return ""
-  EndIf
-
-  int randId = Utility.RandomInt(0, totalLength - 1)
-
-  i = 0
-  While i < JArray.count(view)
-    int array = JArray.getObj(view, i)
-    int len = JArray.count(array)
-    If randId < len
-      JValue.release(view)
-      return JArray.getStr(array, randId)
-    EndIf
-    randId -= len
-    i += 1
-  EndWhile
-
-  JValue.release(view)
-  return ""
-EndFunction
-
-int Function SampleColor()
-	return Utility.RandomInt(0, 16777215)
+  return view
 EndFunction
 
 Function Populate(String dir)
