@@ -5,3 +5,4 @@ float Property globalProb = 0.8 Auto
 int Property maxTattoos = 2 Auto
 float Property multipleTattooProb = 0.4 Auto
 float Property useExistingColorProb = 0.0 Auto
+float Property opacity = 1.0 Auto

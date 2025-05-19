@@ -65,6 +65,18 @@
         "sourceType": "PropertyValueFloat",
         "propertyName": "useExistingColorProb"
       }
+    },
+    {
+      "text": "$opacity",
+      "type": "slider",
+      "valueOptions": {
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "formatString": "{2}",
+        "sourceType": "PropertyValueFloat",
+        "propertyName": "opacity"
+      }
     }
   ]
 }

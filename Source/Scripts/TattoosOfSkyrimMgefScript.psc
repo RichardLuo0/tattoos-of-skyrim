@@ -157,12 +157,11 @@ Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int
 		color = tosQuestScript.SampleColor()
 	EndIf
 
-	ApplyOverlay(akTarget, isFemale, AREA_BODY, slot, texture=overlay, color=color)
+	ApplyOverlay(akTarget, isFemale, AREA_BODY, slot, overlay, color, tosMCMScript.opacity)
 EndFunction
 
-Function ApplyOverlay(Actor akActor, bool isFemale, string area, int slot, string texture, int color, float alpha=0.85)
+Function ApplyOverlay(Actor akActor, bool isFemale, string area, int slot, string texture, int color, float alpha)
   string node  = area + " [ovl" + slot + "]"
-
 	NiOverride.AddNodeOverrideString(akActor, isFemale, node, KEY_SHADER_TEXTURE, 0, texture, persist=true)
 	Utility.Wait(0.01)
 
