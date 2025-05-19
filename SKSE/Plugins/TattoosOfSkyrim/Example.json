@@ -5,25 +5,23 @@
       "AnyRace": [
         "Textures\\Actors\\Example.dds"
       ],
-      "Argonian": [],
-      "Nord": [],
-      "Khajiit": []
-    },
-    "Female": {
-      "AnyRace": [],
       "Altmer": [],
       "Argonian": [],
+      "Bosmer": [],
+      "Breton": [],
       "Dunmer": [],
       "Imperial": [],
       "Khajiit": [],
-      "Mage": [],
-      "Nord": []
+      "Nord": [],
+      "Orc": [],
+      "Redguard": [],
+      "Mage": []
+    },
+    "Female": {
+      "AnyRace": []
     },
     "Male": {
-      "AnyRace": [],
-      "Argonian": [],
-      "Khajiit": [],
-      "Mage": []
+      "AnyRace": []
     }
   }
 }
