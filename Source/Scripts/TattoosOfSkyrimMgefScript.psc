@@ -147,19 +147,14 @@ EndFunction
 Function ApplyOverlay(Actor akActor, bool isFemale, string area, int slot, string texture, int color, float alpha)
   string node  = area + " [ovl" + slot + "]"
 	NiOverride.AddNodeOverrideString(akActor, isFemale, node, KEY_SHADER_TEXTURE, 0, texture, persist=true)
-	Utility.Wait(0.01)
-
 	NiOverride.AddNodeOverrideInt(akActor, isFemale, node, KEY_SHADER_TINT_COLOR, -1, color, persist=true)
-	Utility.Wait(0.01)
-
 	NiOverride.AddNodeOverrideFloat(akActor, isFemale, node, KEY_SHADER_ALPHA, -1, alpha, persist=true)
-	Utility.Wait(0.01)
 EndFunction
 
 Function FinaliseOverlays(Actor akActor)
-	akActor.QueueNiNodeUpdate()
-	Utility.Wait(0.01)
 	NiOverride.ApplyNodeOverrides(akActor)
+  akActor.QueueNiNodeUpdate()	
+EndFunction
 
 String Function ChooseRandomlyIn(int view)
   int totalLength = 0
