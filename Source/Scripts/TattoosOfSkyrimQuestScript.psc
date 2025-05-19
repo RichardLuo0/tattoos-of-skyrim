@@ -27,10 +27,6 @@ EndEvent
 
 Function LoadData()
 	BusyLoading = True
-	int[] PAPER_version = PAPER_SKSEFunctions.GetPaperVersion()
-	If (PAPER_version.Length != 3 || PAPER_version[0] < 2 || (PAPER_version[0] == 2 && PAPER_version[1] < 1))
-		Debug.MessageBox("Tattoos of Skyrim requires version 2.1.0 or later of PAPER!")
-	EndIf
 
 	If PapyrusUtil.GetVersion() != PapyrusUtil.GetScriptVersion()
 		Debug.TraceAndBox("Detected an incorrect PapyrusUtil installation. Make sure that no mod overwrites any PapyrusUtil files. Simply Knock and Campfire are common examples: let PapyrusUtil overwrite their files!")

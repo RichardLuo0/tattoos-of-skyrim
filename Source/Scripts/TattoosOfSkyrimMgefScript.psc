@@ -139,23 +139,7 @@ Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int
 		return
 	EndIf
 
-	int color = -1
-	If (warpaintColors.Length > 0) && Roll(tosMCMScript.useExistingColorProb)
-		ColorForm warpaintColor = warpaintColors[Utility.RandomInt(0, warpaintColors.Length - 1)]
-		color = warpaintColor.GetColor()
-	; 	int newRed = warpaintColor.GetRed() + 35
-	; 	if newRed > 255
-	; 		newRed = 255
-	; 	endIf
-	; 	color = ColorComponent.SetRed(color, newRed)
-	; 	Float newValue = ColorComponent.GetValue(color) * 1.5
-	; 	if newValue > 1.0
-	; 		newValue = 1.0
-	; 	endIf
-	; 	color = ColorComponent.SetValue(color, newValue)
-	Else
-		color = tosQuestScript.SampleColor()
-	EndIf
+	int color = Utility.RandomInt(0, 16777215)
 
 	ApplyOverlay(akTarget, isFemale, AREA_BODY, slot, overlay, color, tosMCMScript.opacity)
 EndFunction
@@ -225,6 +209,7 @@ bool Function Roll(float chance)
     return false
   ElseIf chance == 1.0
     return true
+  Else
+    return Utility.RandomFloat(0, 0.99999) <= chance
   EndIf
-  return Utility.RandomFloat(0, 0.99999) <= chance
 EndFunction
