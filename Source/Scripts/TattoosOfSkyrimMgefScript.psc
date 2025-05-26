@@ -122,6 +122,7 @@ Function ApplyMultipleOverlays(Actor akTarget)
     If counter == 0 || Roll(tosMCMScript.multipleTattooProb)
       slot = GetEmptySlot(akTarget, isFemale, AREA_BODY, slot)
       If slot < 0
+        JValue.release(overlaysView)
         return
       EndIf
       ApplyRandomOverlay(akTarget, overlaysView, isFemale, slot)
@@ -153,7 +154,7 @@ EndFunction
 
 Function FinaliseOverlays(Actor akActor)
 	NiOverride.ApplyNodeOverrides(akActor)
-  akActor.QueueNiNodeUpdate()	
+  akActor.QueueNiNodeUpdate()
 EndFunction
 
 String Function ChooseRandomlyIn(int view)
