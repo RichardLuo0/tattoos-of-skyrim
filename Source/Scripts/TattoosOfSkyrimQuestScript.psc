@@ -16,31 +16,31 @@ int tattoosMap
 Bool BusyLoading = True
 
 Event OnInit()
-	If IsRunning()
-		; Perform init for this game load
-		LoadData()
-	Else
-		; Start the quest (first time mod is installed)
-		Start()
-	EndIf
+  If IsRunning()
+    ; Perform init for this game load
+    LoadData()
+  Else
+    ; Start the quest (first time mod is installed)
+    Start()
+  EndIf
 EndEvent
 
 Function LoadData()
-	BusyLoading = True
+  BusyLoading = True
 
-	If PapyrusUtil.GetVersion() != PapyrusUtil.GetScriptVersion()
-		Debug.TraceAndBox("Detected an incorrect PapyrusUtil installation. Make sure that no mod overwrites any PapyrusUtil files. Simply Knock and Campfire are common examples: let PapyrusUtil overwrite their files!")
-	ElseIf PapyrusUtil.GetVersion() < 33
-		Debug.TraceAndBox("Tattoos of Skyrim requires at least version 3.3 of PapyrusUtil to be installed!")
-	EndIf
+  If PapyrusUtil.GetVersion() != PapyrusUtil.GetScriptVersion()
+    Debug.TraceAndBox("Detected an incorrect PapyrusUtil installation. Make sure that no mod overwrites any PapyrusUtil files. Simply Knock and Campfire are common examples: let PapyrusUtil overwrite their files!")
+  ElseIf PapyrusUtil.GetVersion() < 33
+    Debug.TraceAndBox("Tattoos of Skyrim requires at least version 3.3 of PapyrusUtil to be installed!")
+  EndIf
 
   Populate("Data/SKSE/Plugins/TattoosOfSkyrim")
 
-	BusyLoading = False
+  BusyLoading = False
 EndFunction
 
 Bool Function FinishedLoading()
-	return !BusyLoading
+  return !BusyLoading
 EndFunction
 
 int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
@@ -58,7 +58,7 @@ int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
     currentSex[1] = "Male"
   EndIf 
 
-  String[] currentRace = new String[3]
+  String[] currentRace = new String[2]
   currentRace[0] = "AnyRace"
   Race actorRace = akActor.GetRace()
   If actorRace == raceAltmer
@@ -82,9 +82,6 @@ int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
   ElseIf actorRace == raceRedguard
     currentRace[1] = "Redguard"
   EndIf
-  If akActor.HasKeywordString("ActorClassTypeMagic")
-    currentRace[2] = "Mage" 
-  EndIf
 
   int j = 0
   While j < currentType.Length
@@ -92,12 +89,10 @@ int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
     While k < currentSex.Length
       int l = 0
       While l < currentRace.Length
-        If currentSex[k] != "" && currentRace[l] != ""
-          String mapKey = currentType[j] + "." + currentSex[k] + "." + currentRace[l]
-          int array = JMap.getObj(tattoosMap, mapKey)
-          If array != 0
-            JArray.addObj(view, array)
-          EndIf
+        String mapKey = currentType[j] + "." + currentSex[k] + "." + currentRace[l]
+        int array = JMap.getObj(tattoosMap, mapKey)
+        If array != 0
+          JArray.addObj(view, array)
         EndIf
         l += 1
       EndWhile
@@ -112,10 +107,11 @@ EndFunction
 Function Populate(String dir)
   tattoosMap = JValue.releaseAndRetain(tattoosMap, JMap.object(), "tattoosMap")
 
-  String[] types = new String[3]
-  types[0] = ""
-  types[1] = "Forsworn"
-  types[2] = "Bandit"
+  ; String[] types = new String[4]
+  ; types[0] = ""
+  ; types[1] = "Forsworn"
+  ; types[2] = "Bandit"
+  ; types[3] = "Warlock"
 
   String[] sexs = new String[3]
   sexs[0] = "AnySex"
@@ -139,7 +135,7 @@ Function Populate(String dir)
   String[] jsonFiles = MiscUtil.FilesInFolder(dir, extension = "json")
 
   int i = 0
-	While i < jsonFiles.Length
+  While i < jsonFiles.Length
     int json = JValue.readFromFile(dir + "/" + jsonFiles[i])
     String type = JValue.solveStr(json, ".type")
 
@@ -172,9 +168,10 @@ String[] Function ParseJsonAndPopulate(int json, String mapKey, String path)
 
     int i = 0
     while i < resLen
-      String tex = JArray.getStr(res, i)
-      If MiscUtil.FileExists("Data/" + tex)
-        JArray.addStr(array, tex)
+      String overlay = JArray.getStr(res, i)
+      String[] splits = StringUtil.Split(overlay, "|")
+      If MiscUtil.FileExists("Data/" + splits[splits.Length - 1])
+        JArray.addStr(array, overlay)
       EndIf
       i += 1
     EndWhile

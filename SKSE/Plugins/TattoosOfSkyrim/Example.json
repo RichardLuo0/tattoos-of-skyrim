@@ -3,7 +3,8 @@
   "Body": {
     "AnySex": {
       "AnyRace": [
-        "Textures\\Actors\\Example.dds"
+        "Textures\\Actors\\Example.dds",
+        "Hands|tint|Textures\\Actors\\Hands.dds"
       ],
       "Altmer": [],
       "Argonian": [],
@@ -14,8 +15,7 @@
       "Khajiit": [],
       "Nord": [],
       "Orc": [],
-      "Redguard": [],
-      "Mage": []
+      "Redguard": []
     },
     "Female": {
       "AnyRace": []
