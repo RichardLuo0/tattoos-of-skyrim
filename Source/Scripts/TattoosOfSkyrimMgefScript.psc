@@ -163,9 +163,15 @@ Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int
 
   int color = Utility.RandomInt(0, 16777215)
   int emissiveColor = -1
-  If emissive == "none"
-  ElseIf emissive == "tint"
-    emissiveColor = color
+  If tosMCMScript.allTexturesEmit
+    If Roll(tosMCMScript.emitProb)
+      emissiveColor = color
+    EndIf
+  Else
+    If emissive == "none"
+    ElseIf emissive == "tint" && Roll(tosMCMScript.emitProb)
+      emissiveColor = color
+    EndIf
   EndIf
 
   ApplyOverlay(akTarget, isFemale, area, slot, texture, color, emissiveColor, tosMCMScript.opacity)
