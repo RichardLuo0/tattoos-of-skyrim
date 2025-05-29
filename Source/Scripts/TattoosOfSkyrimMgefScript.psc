@@ -242,6 +242,6 @@ bool Function Roll(float chance)
   ElseIf chance == 1.0
     return true
   Else
-    return Utility.RandomFloat(0, 0.99999) <= chance
+    return Utility.RandomFloat(0, 1) <= chance
   EndIf
 EndFunction
