@@ -110,19 +110,13 @@ EndEvent
 
 ; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-int slots = 0
-
 Function ApplyMultipleOverlays(Actor akTarget)
   ActorBase targetBase = akTarget.GetLeveledActorBase()
   bool isFemale = targetBase.GetSex() as bool
 
   int overlaysView = tosQuestScript.GetOverlaysView(npcType, akTarget, isFemale)
 
-  If slots == 0
-    slots = JMap.object()
-  Else
-    JMap.clear(slots)
-  EndIf
+  int slots = JMap.object()
   JMap.setInt(slots, AREA_BODY, tosMCMScript.slot)
 
   int counter = 0
@@ -133,6 +127,7 @@ Function ApplyMultipleOverlays(Actor akTarget)
     counter += 1
   EndWhile
 
+  JValue.release(slots)
   JValue.release(overlaysView)
 EndFunction
 
