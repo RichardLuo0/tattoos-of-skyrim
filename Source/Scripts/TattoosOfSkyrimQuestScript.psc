@@ -12,6 +12,7 @@ Race Property raceOrc auto
 Race Property raceRedguard auto
 
 int tattoosMap
+int colorsArray
 
 Bool BusyLoading = True
 
@@ -34,7 +35,8 @@ Function LoadData()
     Debug.TraceAndBox("Tattoos of Skyrim requires at least version 3.3 of PapyrusUtil to be installed!")
   EndIf
 
-  Populate("Data/SKSE/Plugins/TattoosOfSkyrim")
+  PopulateTattoos("Data/SKSE/Plugins/TattoosOfSkyrim")
+  PopulateColors(MCM.GetModSettingString("TattoosOfSkyrim", "sColors:"))
 
   BusyLoading = False
 EndFunction
@@ -104,7 +106,16 @@ int Function GetOverlaysView(String type, Actor akActor, bool isFemale)
   return view
 EndFunction
 
-Function Populate(String dir)
+int Function GetRandomColor()
+  int count = JArray.count(colorsArray)
+  If count > 0
+    return JArray.getInt(colorsArray, Utility.RandomInt(0, count - 1))
+  Else
+    return -1
+  EndIf
+EndFunction
+
+Function PopulateTattoos(String dir)
   tattoosMap = JValue.releaseAndRetain(tattoosMap, JMap.object(), "tattoosMap")
 
   ; String[] types = new String[4]
@@ -144,7 +155,7 @@ Function Populate(String dir)
       int k = 0
       While k < races.Length
         String mapKey = type + "." + sexs[j] + "." + races[k]
-        ParseJsonAndPopulate(json, mapKey, ".Body." + sexs[j] + "." + races[k])
+        ParseAndPopulateTattoos(json, mapKey, ".Body." + sexs[j] + "." + races[k])
         k += 1
       EndWhile
       j += 1
@@ -155,7 +166,7 @@ Function Populate(String dir)
   EndWhile
 EndFunction
 
-String[] Function ParseJsonAndPopulate(int json, String mapKey, String path)
+String[] Function ParseAndPopulateTattoos(int json, String mapKey, String path)
   int res = JValue.solveObj(json, path)
   int resLen = JArray.count(res)
 
@@ -176,4 +187,15 @@ String[] Function ParseJsonAndPopulate(int json, String mapKey, String path)
       i += 1
     EndWhile
   EndIf
+EndFunction
+
+Function PopulateColors(String colors)
+  String[] splits = StringUtil.Split(colors, "|")
+  colorsArray = JValue.releaseAndRetain(colorsArray, JArray.objectWithSize(splits.Length), "colorsArray")
+
+  int i = 0
+  While i < splits.Length
+    JArray.setInt(colorsArray, i, PO3_SKSEFunctions.StringToInt(splits[i]))
+    i += 1
+  EndWhile
 EndFunction

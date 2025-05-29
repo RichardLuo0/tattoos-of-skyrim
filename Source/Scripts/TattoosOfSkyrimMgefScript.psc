@@ -156,7 +156,11 @@ Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int
   EndIf
   JMap.setInt(slotMap, area, slot + 1)
 
-  int color = Utility.RandomInt(0, 16777215)
+  int color = tosQuestScript.GetRandomColor()
+  If color == -1
+    color = Utility.RandomInt(0, 16777215)
+  EndIf
+
   int emissiveColor = -1
   If tosMCMScript.allTexturesEmit
     If Roll(tosMCMScript.emitProb)
