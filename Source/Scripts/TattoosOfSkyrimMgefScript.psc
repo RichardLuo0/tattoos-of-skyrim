@@ -164,8 +164,12 @@ Function ApplyRandomOverlay(Actor akTarget, int overlaysView, bool isFemale, int
     EndIf
   Else
     If emissive == "none"
-    ElseIf emissive == "tint" && Roll(tosMCMScript.emitProb)
-      emissiveColor = color
+    ElseIf Roll(tosMCMScript.emitProb)
+      If emissive == "tint"
+        emissiveColor = color
+      Else
+        emissiveColor = PO3_SKSEFunctions.StringToInt(color)
+      EndIf
     EndIf
   EndIf
 
