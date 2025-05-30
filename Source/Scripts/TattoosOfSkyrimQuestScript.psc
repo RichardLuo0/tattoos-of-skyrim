@@ -178,12 +178,8 @@ String[] Function ParseAndPopulateTattoos(int json, String mapKey, String path)
     EndIf
 
     int i = 0
-    while i < resLen
-      String overlay = JArray.getStr(res, i)
-      String[] splits = StringUtil.Split(overlay, "|")
-      If MiscUtil.FileExists("Data/" + splits[splits.Length - 1])
-        JArray.addStr(array, overlay)
-      EndIf
+    while i < resLen 
+      JArray.addStr(array, JArray.getStr(res, i))
       i += 1
     EndWhile
   EndIf
