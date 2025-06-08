@@ -1,16 +1,16 @@
 {
-  "type": "",
+  "faction": "",
   "Body": {
     "AnySex": {
       "AnyRace": [
         "Textures\\Actors\\Example.dds",
         "Hands|tint|Textures\\Actors\\Hands.dds"
       ],
-      "Altmer": [],
+      "HighElf": [],
       "Argonian": [],
-      "Bosmer": [],
+      "WoodElf": [],
       "Breton": [],
-      "Dunmer": [],
+      "DarkElf": [],
       "Imperial": [],
       "Khajiit": [],
       "Nord": [],

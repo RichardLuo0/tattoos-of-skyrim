@@ -59,7 +59,6 @@ Scriptname TattoosOfSkyrimMgefScript extends ActiveMagicEffect
 ; PROPERTIES
 ; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-String Property npcType auto
 TattoosOfSkyrimQuestScript Property tosQuestScript auto
 TattoosOfSkyrimMCM Property tosMCMScript auto
 
@@ -91,7 +90,7 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
   int safetyBound = 100
   While !tosQuestScript.FinishedLoading() && safetyBound > 0
     Utility.Wait(0.25)
-    safetyBound = safetyBound - 1
+    safetyBound -= 1
   EndWhile
 
   If !tosQuestScript.FinishedLoading()
@@ -100,21 +99,17 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
   EndIf
 
   ApplyMultipleOverlays(akTarget)
-
-  If !NiOverride.HasOverlays(akTarget)
-    NiOverride.AddOverlays(akTarget)
-  EndIf
-
-  FinaliseOverlays(akTarget)
 EndEvent
 
 ; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Function ApplyMultipleOverlays(Actor akTarget)
-  ActorBase targetBase = akTarget.GetLeveledActorBase()
-  bool isFemale = targetBase.GetSex() as bool
+  bool isFemale = akTarget.GetLeveledActorBase().GetSex() as bool
 
-  int overlaysView = tosQuestScript.GetOverlaysView(npcType, akTarget, isFemale)
+  int overlaysView = tosQuestScript.GetOverlaysView(akTarget, isFemale, tosMCMScript.ignoreOtherFaction)
+  If overlaysView == 0
+    return
+  EndIf
 
   int slots = JMap.object()
   JMap.setInt(slots, AREA_BODY, tosMCMScript.slot)
@@ -126,6 +121,8 @@ Function ApplyMultipleOverlays(Actor akTarget)
     EndIf
     counter += 1
   EndWhile
+
+  FinaliseOverlays(akTarget)
 
   JValue.release(slots)
   JValue.release(overlaysView)
@@ -190,9 +187,12 @@ Function ApplyOverlay(Actor akActor, bool isFemale, string area, int slot, strin
   NiOverride.AddNodeOverrideFloat(akActor, isFemale, node, KEY_SHADER_ALPHA, -1, alpha, persist=true)
 EndFunction
 
-Function FinaliseOverlays(Actor akActor)
-  NiOverride.ApplyNodeOverrides(akActor)
-  akActor.QueueNiNodeUpdate()
+Function FinaliseOverlays(Actor akTarget)
+  If !NiOverride.HasOverlays(akTarget)
+    NiOverride.AddOverlays(akTarget)
+  EndIf
+  NiOverride.ApplyNodeOverrides(akTarget)
+  akTarget.QueueNiNodeUpdate()
 EndFunction
 
 String Function ChooseRandomlyIn(int view)
