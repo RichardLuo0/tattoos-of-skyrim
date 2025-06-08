@@ -104,9 +104,9 @@ EndEvent
 ; ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Function ApplyMultipleOverlays(Actor akTarget)
-  bool isFemale = akTarget.GetLeveledActorBase().GetSex() as bool
+  int sex = akTarget.GetLeveledActorBase().GetSex()
 
-  int overlaysView = tosQuestScript.GetOverlaysView(akTarget, isFemale, tosMCMScript.ignoreOtherFaction)
+  int overlaysView = tosQuestScript.GetOverlaysView(akTarget, sex)
   If overlaysView == 0
     return
   EndIf
@@ -117,7 +117,7 @@ Function ApplyMultipleOverlays(Actor akTarget)
   int counter = 0
   While counter < tosMCMScript.maxTattoos
     If counter == 0 || Roll(tosMCMScript.multipleTattooProb)
-      ApplyRandomOverlay(akTarget, overlaysView, isFemale, slots)
+      ApplyRandomOverlay(akTarget, overlaysView, sex, slots)
     EndIf
     counter += 1
   EndWhile

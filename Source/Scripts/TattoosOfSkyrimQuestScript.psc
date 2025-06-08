@@ -51,7 +51,7 @@ Bool Function FinishedLoading()
   return !BusyLoading
 EndFunction
 
-int Function GetOverlaysView(Actor akActor, bool isFemale)
+int Function GetOverlaysView(Actor akActor, int sex)
   int view = JArray.object()
 
   String[] factionCdd = new String[2]
@@ -77,10 +77,12 @@ int Function GetOverlaysView(Actor akActor, bool isFemale)
 
   String[] sexCdd = new String[2]
   sexCdd[0] = "AnySex"
-  If isFemale
+  If sex == 1
     sexCdd[1] = "Female"
-  Else
+  ElseIf sex == 0
     sexCdd[1] = "Male"
+  Else
+    sexCdd[1] = "Other"
   EndIf 
 
   String[] raceCdd = new String[2]
